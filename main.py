@@ -4,8 +4,8 @@
 
 if __name__ == '__main__':
 
-    identity_file = 'alignment.identity'
-    taxonomy_file = 'taxonomy.csv'
+    identity_file = 'input_files/alignment.identity'
+    taxonomy_file = 'input_files/taxonomy.csv'
     fh = open(identity_file)
     # number of all sequences
     seq_number = fh.readline()
