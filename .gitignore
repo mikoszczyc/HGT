@@ -130,3 +130,6 @@ dmypy.json
 
 # Generated test files
 input_files/test.identity
+
+# .idea dir and files
+.idea/
