@@ -5,6 +5,7 @@ def generate_alignment(file, size):
     fh.readline()
     file = 'input_files/' + file
     f = open(file + '.identity', 'w')
+    f.write(f'{size}\n')
     for i in range(0, int(size)):
         line = fh.readline()
         line = line.split()
