@@ -18,7 +18,9 @@ if __name__ == '__main__':
     # get all ids in one array
     ids = []
     for line in fh:
-        ids = [line.split()[0]]
+        ids.append(line.split()[0])
+    fh.seek(0)  # go back to beginning of the file
+    fh.readline()   # read first line (number of sequences)
 
     for line in fh:
         temp = line.split()
@@ -29,5 +31,6 @@ if __name__ == '__main__':
         identity = []
         for i, percentage in enumerate(percentage_identity):
             pair = (ids[i], percentage)
-            identity = identity.append(pair)
-        print(identity)
+            identity.append(pair)   # append tuple to list
+        # print(f'{species}|{protein}')
+        # print(identity)
