@@ -1,10 +1,15 @@
 # HORIZONTAL GENE TRANSFER
 
 # import argparse
+import generate_small_alignment as generator
 
 if __name__ == '__main__':
 
-    identity_file = 'input_files/alignment.identity'
+    num_seq = input("Enter number of sequences you want to keep:")
+    save_f = input("Enter name of a file to save to:")
+    id_file = generator.generate_alignment(save_f, num_seq)
+
+    identity_file = id_file + '.identity'
     taxonomy_file = 'input_files/taxonomy.csv'
     fh = open(identity_file)
     # number of all sequences
