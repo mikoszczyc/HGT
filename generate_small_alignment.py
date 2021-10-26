@@ -8,7 +8,7 @@ def generate_alignment(file, size):
     for i in range(0, int(size)):
         line = fh.readline()
         line = line.split()
-        temp = "\t".join(line[:(int(size)+1)])
+        temp = " ".join(line[:(int(size)+1)])
         f.write(f'{temp}\n')
     f.close()
     return file
