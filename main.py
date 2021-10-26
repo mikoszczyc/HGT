@@ -2,6 +2,7 @@
 
 # import argparse
 import generate_small_alignment as generator
+import create_objects
 
 if __name__ == '__main__':
 
@@ -34,3 +35,11 @@ if __name__ == '__main__':
             identity.append(pair)   # append tuple to list
         # print(f'{species}|{protein}')
         # print(identity)
+
+
+    # ----------------------------------------------------------------
+    # Load taxonomy data:
+    a = {}
+    a = create_objects.createTaxObj(taxonomy_file)
+
+    print(a)
