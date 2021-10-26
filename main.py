@@ -6,7 +6,7 @@ import generate_small_alignment as generator
 if __name__ == '__main__':
 
     num_seq = input("Enter number of sequences you want to keep:")
-    save_f = input("Enter name of a file to save to:")
+    save_f = input("Enter name of a file to save alignment to:")
     id_file = generator.generate_alignment(save_f, num_seq)
 
     identity_file = id_file + '.identity'
@@ -16,6 +16,7 @@ if __name__ == '__main__':
     seq_number = fh.readline()
 
     # get all ids in one array
+    ids = []
     for line in fh:
         ids = [line.split()[0]]
 
@@ -27,4 +28,6 @@ if __name__ == '__main__':
         percentage_identity = temp[1:]
         identity = []
         for i, percentage in enumerate(percentage_identity):
-            pair = [ids[i], percentage]
+            pair = (ids[i], percentage)
+            identity = identity.append(pair)
+        print(identity)
