@@ -1,6 +1,6 @@
 class Tax:
     # genome_id = ''
-    def __init__(self,genome_id,sk,phylum, cl, order, family, genus, species):
+    def __init__(self, genome_id, sk, phylum, cl, order, family, genus, species):
         self.genome_id = genome_id
         self.sk = sk
         self.phylum = phylum
@@ -9,8 +9,10 @@ class Tax:
         self.family = family
         self.genus = genus
         self.species = species
+
     def __str__(self):
-        return  str(self.__dict__)
+        return str(self.__dict__)
+
 
 def createTaxObj(file): # Creates objects from taxonomy.csv
     # Create obj dictionary
@@ -27,5 +29,7 @@ def createTaxObj(file): # Creates objects from taxonomy.csv
         # print(a[i])
 
     return a
+
+
 if __name__ == '__main__':
     createTaxObj('input_files/taxonomy.csv')
