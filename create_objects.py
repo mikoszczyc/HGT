@@ -25,7 +25,7 @@ def createTaxObj(file): # Creates objects from taxonomy.csv
         tmp = line.split(sep=',')
         tmp[-1] = tmp[-1][:-1] # removing new line symbol
 
-        a[i] = Tax(*tmp)
+        a.append(Tax(*tmp))
 
     return a
 

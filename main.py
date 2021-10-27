@@ -1,18 +1,22 @@
 # HORIZONTAL GENE TRANSFER
 
 # import argparse
+from operator import itemgetter
 import generate_small_alignment as generator
 import create_objects
 
 if __name__ == '__main__':
 
     num_seq = input("Enter number of sequences you want to keep:")
-    save_f = input("Enter name of a file to save alignment to:")
+    # save_f = input("Enter name of a file to save alignment to:")
+    save_f = 'test'
     id_file = generator.generate_alignment(save_f, num_seq)
 
     identity_file = id_file + '.identity'
     taxonomy_file = 'input_files/taxonomy.csv'
     fh = open(identity_file)
+    sf = open('output_files/out.txt', 'w')
+
     # number of all sequences
     seq_number = fh.readline()
 
@@ -31,11 +35,15 @@ if __name__ == '__main__':
         percentage_identity = temp[1:]
         identity = []
         for i, percentage in enumerate(percentage_identity):
-            pair = (ids[i], percentage)
+            pair = (ids[i], float(percentage))
             identity.append(pair)   # append tuple to list
         # print(f'{species}|{protein}')
         # print(identity)
-
+        identity = sorted(identity, reverse=True) # todo: sortowanie wg % w krotce
+        sf.write(f'{species}|{protein}\n')
+        sf.write('\t'.join('{} - {}'.format(x[0],x[1]) for x in identity))
+        sf.write('\n\n')
+        # sf.close()
 
     # ----------------------------------------------------------------
     # Load taxonomy data:
