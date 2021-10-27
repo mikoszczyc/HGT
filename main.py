@@ -39,7 +39,6 @@ if __name__ == '__main__':
 
     # ----------------------------------------------------------------
     # Load taxonomy data:
-    # a = {}
-    a = create_objects.createTaxObj(taxonomy_file)
+    taxonomy = create_objects.createTaxObj(taxonomy_file)
 
-    print(a)
+    # print(taxonomy)

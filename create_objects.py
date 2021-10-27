@@ -15,8 +15,8 @@ class Tax:
 
 
 def createTaxObj(file): # Creates objects from taxonomy.csv
-    # Create obj dictionary
-    a = {}
+    # Create obj list
+    a = []
 
     # Open input file
     fh = open(file)
@@ -24,9 +24,8 @@ def createTaxObj(file): # Creates objects from taxonomy.csv
     for i, line in enumerate(fh):
         tmp = line.split(sep=',')
         tmp[-1] = tmp[-1][:-1] # removing new line symbol
-        # print(tmp)
-        a[tmp[0]] = Tax(*tmp)
-        # print(a[i])
+
+        a[i] = Tax(*tmp)
 
     return a
 
