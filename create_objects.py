@@ -14,18 +14,18 @@ class Tax:
         return str(self.__dict__)
 
 
-def createTaxObj(file): # Creates objects from taxonomy.csv
-    # Create obj list
-    a = []
+def createTaxObj(file):  # Creates objects from taxonomy.csv
+    # Create obj dict
+    a = {}
 
     # Open input file
     fh = open(file)
     fh.readline()
     for i, line in enumerate(fh):
         tmp = line.split(sep=',')
-        tmp[-1] = tmp[-1][:-1] # removing new line symbol
+        tmp[-1] = tmp[-1][:-1]  # removing new line symbol
 
-        a.append(Tax(*tmp))
+        a[tmp[0]] = (Tax(*tmp))
 
     return a
 
