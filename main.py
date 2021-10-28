@@ -3,20 +3,20 @@
 # import argparse
 from operator import itemgetter
 from pathlib import Path
-import generate_small_alignment as generator
+# import generate_small_alignment as generator
 import create_objects
 
 if __name__ == '__main__':
 
-    num_seq = input("Enter number of sequences you want to keep:")
-    # save_f = input("Enter name of a file to save alignment to:")
-    save_f = 'test'
-    id_file = generator.generate_alignment(save_f, num_seq)
+    # num_seq = input("Enter number of sequences you want to keep:")
+    # # save_f = input("Enter name of a file to save alignment to:")
+    # save_f = 'test'
+    # id_file = generator.generate_alignment(save_f, num_seq)
 
-    identity_file = id_file + '.identity'
+    # identity_file = id_file + '.identity'
     taxonomy_file = 'input_files/taxonomy.csv'
     output_dir = 'output_files'
-    fh = open(identity_file)
+    fh = open('input_files/alignment.identity')
     taxonomy = create_objects.createTaxObj(taxonomy_file)
 
     Path(output_dir).mkdir(parents=True, exist_ok=True)  # creates directory if it didn't exist before
@@ -43,7 +43,7 @@ if __name__ == '__main__':
             pair = (ids[i], float(percentage))
             identity.append(pair)  # append tuple to list
 
-        identity.sort(key=itemgetter(1), reverse=True)  # sortowanie wg % w krotce (DESC)
+        identity.sort(key=itemgetter(1), reverse=True)  # sort by % DESC
         feet = False
         originOrganism = taxonomy[species]
 
