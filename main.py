@@ -46,6 +46,8 @@ if __name__ == '__main__':
         identity.sort(key=itemgetter(1), reverse=True)  # sortowanie wg % w krotce (DESC)
         feet = False
         originOrganism = taxonomy[species]
+
+        # if el ∉ genus ∧ el ∈ family
         for organism in identity:
             if organism[1] != 100.0:
                 tmpOrganism = taxonomy[organism[0].split('|')[0]]
@@ -71,14 +73,11 @@ if __name__ == '__main__':
                     feet = True
                     hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
                     break
-
     hit.close()
 
     hit = open(f'{output_dir}/hit.txt', 'r')
     result = open(f'{output_dir}/crossedResult.csv', 'w')
-
     hitRead = hit.readlines()
-
     foundItems = []
 
     for i, line in enumerate(hitRead):
