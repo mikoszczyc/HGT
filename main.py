@@ -17,9 +17,10 @@ if __name__ == '__main__':
     taxonomy_file = 'input_files/taxonomy.csv'
     output_dir = 'output_files'
     fh = open(identity_file)
-    taxonomy = create_objects.createTaxObj(taxonomy_file)
 
     Path(output_dir).mkdir(parents=True, exist_ok=True)  # creates directory if it didn't exist before
+
+    sf = open(f'{output_dir}/out.txt', 'w')
 
     # number of all sequences
     seq_number = fh.readline()
@@ -30,7 +31,6 @@ if __name__ == '__main__':
         ids.append(line.split()[0])
     fh.seek(0)  # go back to beginning of the file
     fh.readline()  # read first line (number of sequences)
-    hit = open(f'{output_dir}/hit.txt', 'w')
 
     for line in fh:
         temp = line.split()
@@ -44,49 +44,12 @@ if __name__ == '__main__':
             identity.append(pair)  # append tuple to list
 
         identity.sort(key=itemgetter(1), reverse=True)  # sortowanie wg % w krotce (DESC)
-        feet = False
-        originOrganism = taxonomy[species]
-        for organism in identity:
-            if organism[1] != 100.0:
-                tmpOrganism = taxonomy[organism[0].split('|')[0]]
-                if (tmpOrganism.family == originOrganism.family) and (tmpOrganism.genus != originOrganism.genus) and (organism[1] > 50.0):
-                    feet = True
-                    hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
-                    break
+        sf.write(f'{species}|{protein}\n')
+        sf.write('\t'.join('{} - {}'.format(x[0], x[1]) for x in identity))
+        sf.write('\n\n')
 
-        # if el ∉ family ∧ el ∈ order
-        if not feet:
-            for organism in identity:
-                tmpOrganism = taxonomy[organism[0].split('|')[0]]
-                if (tmpOrganism.order == originOrganism.order) and (tmpOrganism.family != originOrganism.family) and (organism[1] > 50.0):
-                    feet = True
-                    hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
-                    break
+    # ----------------------------------------------------------------
+    # Load taxonomy data:
+    taxonomy = create_objects.createTaxObj(taxonomy_file)
 
-        # if el ∉ order ∧ el ∈ class
-        if not feet:
-            for organism in identity:
-                tmpOrganism = taxonomy[organism[0].split('|')[0]]
-                if (tmpOrganism.cl == originOrganism.cl) and (tmpOrganism.order != originOrganism.order) and (organism[1] > 50.0):
-                    feet = True
-                    hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
-                    break
-
-    hit.close()
-
-    hit = open(f'{output_dir}/hit.txt', 'r')
-    result = open(f'{output_dir}/crossedResult.csv', 'w')
-
-    hitRead = hit.readlines()
-
-    foundItems = []
-
-    for i, line in enumerate(hitRead):
-        for line2 in hitRead[(i+1):]:
-            temp = sorted(line.split()[:2])
-            pair = temp[0] + temp[1]
-            temp2 = sorted(line2.split()[:2])
-            pair2 = temp2[0] + temp2[1]
-            if (pair == pair2) and (pair not in foundItems):
-                foundItems.append(pair)
-                result.write(f'{line}')
+    print(taxonomy)
