@@ -51,7 +51,7 @@ if __name__ == '__main__':
         for organism in identity:
             if organism[1] != 100.0:
                 tmpOrganism = taxonomy[organism[0].split('|')[0]]
-                if (tmpOrganism.family == originOrganism.family) and (tmpOrganism.genus != originOrganism.genus) and (organism[1] > 50.0):
+                if (tmpOrganism.family == originOrganism.family) and (tmpOrganism.genus != originOrganism.genus):
                     found = True
                     hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
                     break
@@ -60,7 +60,7 @@ if __name__ == '__main__':
         if not found:
             for organism in identity:
                 tmpOrganism = taxonomy[organism[0].split('|')[0]]
-                if (tmpOrganism.order == originOrganism.order) and (tmpOrganism.family != originOrganism.family) and (organism[1] > 50.0):
+                if (tmpOrganism.order == originOrganism.order) and (tmpOrganism.family != originOrganism.family):
                     found = True
                     hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
                     break
@@ -69,7 +69,7 @@ if __name__ == '__main__':
         if not found:
             for organism in identity:
                 tmpOrganism = taxonomy[organism[0].split('|')[0]]
-                if (tmpOrganism.cl == originOrganism.cl) and (tmpOrganism.order != originOrganism.order) and (organism[1] > 50.0):
+                if (tmpOrganism.cl == originOrganism.cl) and (tmpOrganism.order != originOrganism.order):
                     found = True
                     hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
                     break
