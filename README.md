@@ -1,4 +1,3 @@
-# HGT
 # HGT pseudocode 
 
     for seq_id in alignment.identity:
@@ -25,3 +24,14 @@
 				found = true
 				hit = el / hit = (el_seq, %el_identity)
 				break
+
+    if not found:
+		for el in identity:
+			if el ∉ order ∧ el ∈ class:
+				found = true
+				hit = el / hit = (el_seq, %el_identity)
+				break
+
+	save all hits to 'hit.txt'
+
+	sort hits, pair them and save pairs to 'crossedResult.csv'
