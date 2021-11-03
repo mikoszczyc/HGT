@@ -44,7 +44,7 @@ if __name__ == '__main__':
             identity.append(pair)  # append tuple to list
 
         identity.sort(key=itemgetter(1), reverse=True)  # sort by % DESC
-        feet = False
+        found = False
         originOrganism = taxonomy[species]
 
         # if el ∉ genus ∧ el ∈ family
@@ -52,25 +52,25 @@ if __name__ == '__main__':
             if organism[1] != 100.0:
                 tmpOrganism = taxonomy[organism[0].split('|')[0]]
                 if (tmpOrganism.family == originOrganism.family) and (tmpOrganism.genus != originOrganism.genus) and (organism[1] > 50.0):
-                    feet = True
+                    found = True
                     hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
                     break
 
         # if el ∉ family ∧ el ∈ order
-        if not feet:
+        if not found:
             for organism in identity:
                 tmpOrganism = taxonomy[organism[0].split('|')[0]]
                 if (tmpOrganism.order == originOrganism.order) and (tmpOrganism.family != originOrganism.family) and (organism[1] > 50.0):
-                    feet = True
+                    found = True
                     hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
                     break
 
         # if el ∉ order ∧ el ∈ class
-        if not feet:
+        if not found:
             for organism in identity:
                 tmpOrganism = taxonomy[organism[0].split('|')[0]]
                 if (tmpOrganism.cl == originOrganism.cl) and (tmpOrganism.order != originOrganism.order) and (organism[1] > 50.0):
-                    feet = True
+                    found = True
                     hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
                     break
     hit.close()
