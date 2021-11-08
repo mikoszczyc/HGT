@@ -47,32 +47,46 @@ if __name__ == '__main__':
         found = False
         originOrganism = taxonomy[species]
 
+        # for organism in identity:
+        #    for i, level in enumerate(['genus', 'family', 'order', 'class']):
+        #        if organism[1] != 100.0:
+        #            tmpOrganism = taxonomy[organism[0].split('|')[0]]
+        #            if tmpOrganism.level != originOrganism.level:
+        #
+        #            else:
+
         # if el ∉ genus ∧ el ∈ family
         for organism in identity:
-            if organism[1] != 100.0:
-                tmpOrganism = taxonomy[organism[0].split('|')[0]]
-                if (tmpOrganism.family == originOrganism.family) and (tmpOrganism.genus != originOrganism.genus):
-                    found = True
-                    hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
-                    break
+            if not found:
+                if organism[1] != 100.0:
+                    tmpOrganism = taxonomy[organism[0].split('|')[0]]
+                    if (tmpOrganism.genus != originOrganism.genus) and (tmpOrganism.family != originOrganism.family):
+                        found = True
+                        if tmpOrganism.order == originOrganism.order:
+                            hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:order\n')  # HIT!
+                        elif tmpOrganism.cl == originOrganism.cl:
+                            hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:class\n')  # HIT!
+                        else:
+                            hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:phylum\n')  # HIT!
+                        break
 
-        # if el ∉ family ∧ el ∈ order
-        if not found:
-            for organism in identity:
-                tmpOrganism = taxonomy[organism[0].split('|')[0]]
-                if (tmpOrganism.order == originOrganism.order) and (tmpOrganism.family != originOrganism.family):
-                    found = True
-                    hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
-                    break
-
-        # if el ∉ order ∧ el ∈ class
-        if not found:
-            for organism in identity:
-                tmpOrganism = taxonomy[organism[0].split('|')[0]]
-                if (tmpOrganism.cl == originOrganism.cl) and (tmpOrganism.order != originOrganism.order):
-                    found = True
-                    hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
-                    break
+        # # if el ∉ family ∧ el ∈ order
+        # if not found:
+        #     for organism in identity:
+        #         tmpOrganism = taxonomy[organism[0].split('|')[0]]
+        #         if (tmpOrganism.order == originOrganism.order) and (tmpOrganism.family != originOrganism.family):
+        #             found = True
+        #             hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
+        #             break
+        #
+        # # if el ∉ order ∧ el ∈ class
+        # if not found:
+        #     for organism in identity:
+        #         tmpOrganism = taxonomy[organism[0].split('|')[0]]
+        #         if (tmpOrganism.cl == originOrganism.cl) and (tmpOrganism.order != originOrganism.order):
+        #             found = True
+        #             hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
+        #             break
     hit.close()
 
     hit = open(f'{output_dir}/hit.txt', 'r')
