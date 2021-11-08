@@ -63,8 +63,10 @@ if __name__ == '__main__':
                     if (tmpOrganism.genus != originOrganism.genus) and (tmpOrganism.family != originOrganism.family):
                         found = True
                         if tmpOrganism.order == originOrganism.order:
-                            hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:order\n')  # HIT!
+                            hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:family\n')  # HIT!
                         elif tmpOrganism.cl == originOrganism.cl:
+                            hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:order\n')  # HIT!
+                        elif tmpOrganism.phylum == tmpOrganism.phylum:
                             hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:class\n')  # HIT!
                         else:
                             hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:phylum\n')  # HIT!
