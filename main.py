@@ -66,7 +66,7 @@ if __name__ == '__main__':
                             hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:family\n')  # HIT!
                         elif tmpOrganism.cl == originOrganism.cl:
                             hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:order\n')  # HIT!
-                        elif tmpOrganism.phylum == tmpOrganism.phylum:
+                        elif tmpOrganism.phylum == originOrganism.phylum:
                             hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:class\n')  # HIT!
                         else:
                             hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:phylum\n')  # HIT!
