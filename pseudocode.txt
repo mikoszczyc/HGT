@@ -13,7 +13,7 @@ for seq_id in alignment.identity:
 
 	found = false
 	for el in identity:
-		if el ∉ genus ∧ el ∈ family:
+		if el ∉ genus ∧ el ∉ family:
 			found = true
 			hit = el / hit = (el_seq, %el_identity)
 			break
