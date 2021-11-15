@@ -8,17 +8,13 @@ import create_objects
 
 if __name__ == '__main__':
 
-    # num_seq = input("Enter number of sequences you want to keep:")
-    # # save_f = input("Enter name of a file to save alignment to:")
-    # save_f = 'test'
-    # id_file = generator.generate_alignment(save_f, num_seq)
-
     # identity_file = id_file + '.identity'
     taxonomy_file = 'input_files/taxonomy.csv'
     output_dir = 'output_files'
     fh = open('input_files/alignment.identity')
     taxonomy = create_objects.createTaxObj(taxonomy_file)
-
+    hitPercentage = 0
+    levels = ['family', 'order', 'cl', 'phylum', 'sk']
     Path(output_dir).mkdir(parents=True, exist_ok=True)  # creates directory if it didn't exist before
 
     # number of all sequences
@@ -47,48 +43,33 @@ if __name__ == '__main__':
         found = False
         originOrganism = taxonomy[species]
 
-        # for organism in identity:
-        #    for i, level in enumerate(['genus', 'family', 'order', 'class']):
-        #        if organism[1] != 100.0:
-        #            tmpOrganism = taxonomy[organism[0].split('|')[0]]
-        #            if tmpOrganism.level != originOrganism.level:
-        #
-        #            else:
-
-        # if el ∉ genus ∧ el ∈ family
         for organism in identity:
-            if not found:
+            if found:
+                if organism[1] == hitPercentage:
+                    tmpOrganism = taxonomy[organism[0].split('|')[0]]
+                    for i, level in enumerate(levels):
+                        if level == 'family':
+                            continue
+                        if getattr(tmpOrganism, level) == getattr(originOrganism, level):
+                            hitPercentage = organism[1]
+                            hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:{levels[i-1]}\n')
+                            break
+                    continue
+                else:
+                    break
+            elif not found:
+                hitPercentage = 0
                 if organism[1] != 100.0:
                     tmpOrganism = taxonomy[organism[0].split('|')[0]]
                     if (tmpOrganism.genus != originOrganism.genus) and (tmpOrganism.family != originOrganism.family):
                         found = True
-                        if tmpOrganism.order == originOrganism.order:
-                            hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:family\n')  # HIT!
-                        elif tmpOrganism.cl == originOrganism.cl:
-                            hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:order\n')  # HIT!
-                        elif tmpOrganism.phylum == originOrganism.phylum:
-                            hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:class\n')  # HIT!
-                        else:
-                            hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:phylum\n')  # HIT!
-                        break
-
-        # # if el ∉ family ∧ el ∈ order
-        # if not found:
-        #     for organism in identity:
-        #         tmpOrganism = taxonomy[organism[0].split('|')[0]]
-        #         if (tmpOrganism.order == originOrganism.order) and (tmpOrganism.family != originOrganism.family):
-        #             found = True
-        #             hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
-        #             break
-        #
-        # # if el ∉ order ∧ el ∈ class
-        # if not found:
-        #     for organism in identity:
-        #         tmpOrganism = taxonomy[organism[0].split('|')[0]]
-        #         if (tmpOrganism.cl == originOrganism.cl) and (tmpOrganism.order != originOrganism.order):
-        #             found = True
-        #             hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\n')  # HIT!
-        #             break
+                        for i, level in enumerate(levels):
+                            if level == 'family':
+                                continue
+                            if getattr(tmpOrganism, level) == getattr(originOrganism, level):
+                                hitPercentage = organism[1]
+                                hit.write(f'{species}|{protein}\t{organism[0]}\t{organism[1]}\tl:{levels[i-1]}\n')
+                                break
     hit.close()
 
     hit = open(f'{output_dir}/hit.txt', 'r')
