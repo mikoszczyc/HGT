@@ -56,7 +56,7 @@ if __name__ == '__main__':
                             continue
                         if getattr(tmpOrganism, level) == getattr(originOrganism, level):
                             hitPercentage = similarityPercentage
-                            hit.write(f'{i+2}\t{taxonomy_levels[i-1]}\t{hitPercentage}\t{analysed_species}\t{other_species}\t{analysed_protein}\t{other_protein}\tgenus:{analysed_genus}\tgenus:{other_genus}\n')
+                            hit.write(f'{i+2}\t{taxonomy_levels[i-1]}\t{hitPercentage}\t{analysed_species}\t{other_species}\t{analysed_protein}\t{other_protein}\n')
                             break
                     continue
                 else:
@@ -72,7 +72,7 @@ if __name__ == '__main__':
                                 continue
                             if getattr(tmpOrganism, level) == getattr(originOrganism, level):
                                 hitPercentage = similarityPercentage
-                                hit.write(f'{i+2}\t{taxonomy_levels[i-1]}\t{hitPercentage}\t{analysed_species}\t{other_species}\t{analysed_protein}\t{other_protein}\tgenus:{analysed_genus}\tgenus:{other_genus}\n')
+                                hit.write(f'{i+2}\t{taxonomy_levels[i-1]}\t{hitPercentage}\t{analysed_species}\t{other_species}\t{analysed_protein}\t{other_protein}\n')
                                 break
     hit.close()
 
