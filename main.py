@@ -76,29 +76,32 @@ if __name__ == '__main__':
                                 break
     hit.close()
 
-# zapis do par do pliku (crossed)
+    # save pairs to crossedResult.csv
     inputFile = open(f'{output_dir}/hit.txt', 'r')
     outputFile = open(f'{output_dir}/crossedResult.csv', 'w')
     inputContent = inputFile.readlines()
     foundItems = []
 
     for i, line in enumerate(inputContent):
-        line_organism1 = line.split(sep='\t')[3]
-        line_organism1_protein = line.split(sep='\t')[5]
+        line_organism1 = line.split()[3]
+        line_organism1_protein = line.split()[5]
 
-        line_organism2 = line.split(sep='\t')[4]
-        line_organism2_protein = line.split(sep='\t')[6]
+        line_organism2 = line.split()[4]
+        line_organism2_protein = line.split()[6]
         for line2 in inputContent[(i+1):]:
-            line2_organism1 = line2.split(sep='\t')[3]
-            line2_organism1_protein = line2.split(sep='\t')[5]
+            line2_organism1 = line2.split()[3]
+            line2_organism1_protein = line2.split()[5]
 
-            line2_organism2 = line2.split(sep='\t')[4]
-            line2_organism2_protein = line2.split(sep='\t')[6]
+            line2_organism2 = line2.split()[4]
+            line2_organism2_protein = line2.split()[6]
 
             if line_organism1 == line2_organism2 and line_organism2 == line2_organism1:
                 if line_organism1_protein == line2_organism2_protein and line_organism2_protein == line2_organism1_protein:
-                    foundItems.append(line.split(sep='\t'))
+                    foundItems.append(line.split())
 
     sorted(foundItems, key=itemgetter(3))
     for line in foundItems:
-        outputFile.write('\t'.join(line))
+        outputFile.write('\t'.join(line) + '\n')
+
+    inputFile.close()
+    outputFile.close()
