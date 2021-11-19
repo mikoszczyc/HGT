@@ -13,7 +13,7 @@ if __name__ == '__main__':
     alignment_file = open('input_files/alignment.identity')
     taxonomy = create_objects.createTaxObj(taxonomy_file)
     hitPercentage = 0
-    taxonomy_levels = ['family', 'order', 'cl', 'phylum', 'sk']
+    taxonomy_levels = ['genus', 'family', 'order', 'cl', 'phylum', 'sk']
     Path(output_dir).mkdir(parents=True, exist_ok=True)  # creates directory if it didn't exist before
 
     # number of all sequences
@@ -31,7 +31,6 @@ if __name__ == '__main__':
         temp = line.split()
         analysed_species = temp[0].split('|')[0]
         analysed_protein = temp[0].split('|')[1]
-        analysed_genus = taxonomy[analysed_species].genus
         # array containing percentage identity to other sequences
         percentage_identity = temp[1:]
         identity = []
@@ -42,38 +41,40 @@ if __name__ == '__main__':
         identity.sort(key=itemgetter(1), reverse=True)  # sort by % DESC
         found = False
         originOrganism = taxonomy[analysed_species]
-
-        for organism in identity:
-            other_species = organism[0].split(sep='|')[0]
-            other_protein = organism[0].split(sep='|')[1]
-            other_genus = taxonomy[other_species].genus
-            similarityPercentage = organism[1]
-            if found:
-                if organism[1] == hitPercentage:
-                    tmpOrganism = taxonomy[other_species]
-                    for i, level in enumerate(taxonomy_levels):
-                        if level == 'family':
-                            continue
-                        if getattr(tmpOrganism, level) == getattr(originOrganism, level):
-                            hitPercentage = similarityPercentage
-                            hit.write(f'{i+2}\t{taxonomy_levels[i-1]}\t{hitPercentage}\t{analysed_species}\t{other_species}\t{analysed_protein}\t{other_protein}\n')
+        k = 1
+        for i, level in enumerate(taxonomy_levels):
+            for j in range(k, len(identity)):
+                organism = identity[j]
+                other_species = organism[0].split(sep='|')[0]
+                other_protein = organism[0].split(sep='|')[1]
+                similarityPercentage = organism[1]
+                tmpOrganism = taxonomy[other_species]
+                if found is True:
+                    if getattr(originOrganism, level) != getattr(tmpOrganism, level):
+                        if level == 'sk':
                             break
-                    continue
-                else:
-                    break
-            elif not found:
-                hitPercentage = 0
-                if organism[1] != 100.0:
-                    tmpOrganism = taxonomy[other_species]
-                    if (tmpOrganism.genus != originOrganism.genus) and (tmpOrganism.family != originOrganism.family):
-                        found = True
-                        for i, level in enumerate(taxonomy_levels):
-                            if level == 'family':
-                                continue
-                            if getattr(tmpOrganism, level) == getattr(originOrganism, level):
+                        else:
+                            nextLevel = taxonomy_levels[i+1]
+                            if (similarityPercentage == hitPercentage) and getattr(originOrganism, nextLevel) != getattr(tmpOrganism, nextLevel):
+                                # HIT
+                                hit.write(f'{hitPercentage}\t{analysed_species}\t{other_species}\t{analysed_protein}\t{other_protein}\t{level}:{getattr(originOrganism,level)}\n')
+                            else:
+                                k = j + 1
+                                break  # excluding next lvl
+                elif not found:
+                    if getattr(originOrganism, level) != getattr(tmpOrganism, level):
+                        if level == 'sk':
+                            found = True
+                        else:
+                            nextLevel = taxonomy_levels[i+1]
+                            if getattr(originOrganism, nextLevel) != getattr(tmpOrganism, nextLevel):
+                                # HIT
                                 hitPercentage = similarityPercentage
-                                hit.write(f'{i+2}\t{taxonomy_levels[i-1]}\t{hitPercentage}\t{analysed_species}\t{other_species}\t{analysed_protein}\t{other_protein}\n')
-                                break
+                                hit.write(f'{hitPercentage}\t{analysed_species}\t{other_species}\t{analysed_protein}\t{other_protein}\t{level}:{getattr(originOrganism,level)}\n')
+                                found = True
+                            else:
+                                k = j + 1
+                                break  # excluding next lvl
     hit.close()
 
     # save pairs to crossedResult.csv
@@ -83,23 +84,37 @@ if __name__ == '__main__':
     foundItems = []
 
     for i, line in enumerate(inputContent):
-        line_organism1 = line.split()[3]
-        line_organism1_protein = line.split()[5]
+        line_organism1 = line.split()[1]
+        line_organism1_protein = line.split()[3]
 
-        line_organism2 = line.split()[4]
-        line_organism2_protein = line.split()[6]
+        line_organism2 = line.split()[2]
+        line_organism2_protein = line.split()[4]
         for line2 in inputContent[(i+1):]:
-            line2_organism1 = line2.split()[3]
-            line2_organism1_protein = line2.split()[5]
+            line2_organism1 = line2.split()[1]
+            line2_organism1_protein = line2.split()[3]
 
-            line2_organism2 = line2.split()[4]
-            line2_organism2_protein = line2.split()[6]
+            line2_organism2 = line2.split()[2]
+            line2_organism2_protein = line2.split()[4]
 
             if line_organism1 == line2_organism2 and line_organism2 == line2_organism1:
                 if line_organism1_protein == line2_organism2_protein and line_organism2_protein == line2_organism1_protein:
+                    lvl2 = line2.split()[5]
+                    lvl_diff = 0
+                    lvl_name = ''
+                    for idx, level in enumerate(taxonomy_levels):
+                        org1 = taxonomy[line_organism1]
+                        org2 = taxonomy[line_organism2]
+                        if getattr(org1, level) == getattr(org2, level):
+                            lvl_diff = str(idx+1)
+                            lvl_name = taxonomy_levels[idx-1]
+                            break
+                    line.strip()
+
+                    line = lvl_diff + '\t' + lvl_name + '\t' + line + '\t' + lvl2 + '\n'
+
                     foundItems.append(line.split())
 
-    sorted(foundItems, key=itemgetter(3))
+    sorted(foundItems, key=itemgetter(1))
     for line in foundItems:
         outputFile.write('\t'.join(line) + '\n')
 
