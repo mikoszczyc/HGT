@@ -1,20 +1,30 @@
 # HORIZONTAL GENE TRANSFER
 
 # import argparse
+import os
 from operator import itemgetter
 from pathlib import Path
+# from ete3 import NCBITaxa
 # import generate_small_alignment as generator
 import create_objects
 
 if __name__ == '__main__':
 
+    # ncbi = NCBITaxa()
+    # ncbi.update_taxonomy_database()     # downloading and parsing latest database from NCBI
+
     taxonomy_file = 'input_files/taxonomy.csv'
     output_dir = 'output_files'
-    alignment_file = open('input_files/alignment.identity')
+    # alignment_file = open('input_files/alignment.identity')
     taxonomy = create_objects.createTaxObj(taxonomy_file)
     hitPercentage = 0
     taxonomy_levels = ['genus', 'family', 'order', 'cl', 'phylum', 'sk']
     Path(output_dir).mkdir(parents=True, exist_ok=True)  # creates directory if it didn't exist before
+
+    fasta_file = 'input_files/proteins.fa'
+    clustalo = 'clustalo -i ' + fasta_file + ' -o output_files/alignment.fasta --full --distmat-out output_files/identity.txt --force --percent-id'
+    os.system(clustalo)
+    alignment_file = open('output_files/identity.txt')
 
     # number of all sequences
     seq_number = alignment_file.readline()
