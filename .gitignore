@@ -131,6 +131,7 @@ dmypy.json
 # Generated test files
 input_files/test.identity
 output_files/
+additional/
 
 # .idea dir and files
 .idea/
