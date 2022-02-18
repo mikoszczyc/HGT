@@ -13,7 +13,8 @@ if __name__ == '__main__':
     # ncbi = NCBITaxa()
     # ncbi.update_taxonomy_database()     # downloading and parsing latest database from NCBI
 
-    taxonomy_file = 'input_files/taxonomy.csv'
+    # taxonomy_file = 'input_files/taxonomy.csv'
+    taxonomy_file = 'taxonomy_from_id.csv'
     output_dir = 'output_files'
     # alignment_file = open('input_files/alignment.identity')
     taxonomy = create_objects.createTaxObj(taxonomy_file)
@@ -23,7 +24,7 @@ if __name__ == '__main__':
 
     fasta_file = 'input_files/proteins.fa'
     clustalo = 'clustalo -i ' + fasta_file + ' -o output_files/alignment.fasta --full --distmat-out output_files/identity.txt --force --percent-id'
-    os.system(clustalo)
+    # os.system(clustalo)
     alignment_file = open('output_files/identity.txt')
 
     # number of all sequences
@@ -60,24 +61,32 @@ if __name__ == '__main__':
                 similarityPercentage = organism[1]
                 tmpOrganism = taxonomy[other_species]
                 if found is True:
-                    if getattr(originOrganism, level) != getattr(tmpOrganism, level):
+                    ori_org_level = getattr(originOrganism, level)
+                    tmp_org_level = getattr(tmpOrganism, level)
+                    if ori_org_level != tmp_org_level:
                         if level == 'sk':
                             break
                         else:
                             nextLevel = taxonomy_levels[i+1]
-                            if (similarityPercentage == hitPercentage) and getattr(originOrganism, nextLevel) != getattr(tmpOrganism, nextLevel):
+                            ori_org_next = getattr(originOrganism, nextLevel)
+                            tmp_org_next = getattr(tmpOrganism, nextLevel)
+                            if (similarityPercentage == hitPercentage) and ori_org_next != tmp_org_next:
                                 # HIT
                                 hit.write(f'{hitPercentage}\t{analysed_species}\t{other_species}\t{analysed_protein}\t{other_protein}\t{level}:{getattr(originOrganism,level)}\n')
                             else:
                                 k = j + 1
                                 break  # excluding next lvl
                 elif not found:
-                    if getattr(originOrganism, level) != getattr(tmpOrganism, level):
+                    ori_org_level = getattr(originOrganism, level)
+                    tmp_org_level = getattr(tmpOrganism, level)
+                    if ori_org_level != tmp_org_level:
                         if level == 'sk':
                             found = True
                         else:
                             nextLevel = taxonomy_levels[i+1]
-                            if getattr(originOrganism, nextLevel) != getattr(tmpOrganism, nextLevel):
+                            ori_org_next = getattr(originOrganism, nextLevel)
+                            tmp_org_next = getattr(tmpOrganism, nextLevel)
+                            if (similarityPercentage == hitPercentage) and ori_org_next != tmp_org_next:
                                 # HIT
                                 hitPercentage = similarityPercentage
                                 hit.write(f'{hitPercentage}\t{analysed_species}\t{other_species}\t{analysed_protein}\t{other_protein}\t{level}:{getattr(originOrganism,level)}\n')
