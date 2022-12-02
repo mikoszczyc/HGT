@@ -1,6 +1,7 @@
+#!/usr/bin/env python3
 # HORIZONTAL GENE TRANSFER
 
-# import argparse
+import argparse
 import os
 from operator import itemgetter
 from pathlib import Path
@@ -8,8 +9,17 @@ from pathlib import Path
 # import generate_small_alignment as generator
 import create_objects
 
+parser = argparse.ArgumentParser(description="Find horizontal gene transfer in given sequences.")
+parser.add_argument('-i', '--input', dest='input_file', required=True,
+                    help='Input file (json format)')
+parser.add_argument('-o', '--output', dest='output_file', default='resultHGT.csv',
+                    help='Output file consisting results of HTG analysis.')
+args = parser.parse_args()
+
+
 if __name__ == '__main__':
 
+    # probably not gonna use NCBI
     # ncbi = NCBITaxa()
     # ncbi.update_taxonomy_database()     # downloading and parsing latest database from NCBI
 
@@ -23,7 +33,8 @@ if __name__ == '__main__':
     Path(output_dir).mkdir(parents=True, exist_ok=True)  # creates directory if it didn't exist before
 
     fasta_file = 'input_files/proteins.fa'
-    clustalo = 'clustalo -i ' + fasta_file + ' -o output_files/alignment.fasta --full --distmat-out output_files/identity.txt --force --percent-id'
+    clustalo = 'clustalo -i ' + fasta_file + ' -o output_files/alignment.fasta --full --distmat-out ' \
+                                             'output_files/identity.txt --force --percent-id'
     # os.system(clustalo)
     alignment_file = open('output_files/identity.txt')
 
