@@ -9,22 +9,21 @@ from pathlib import Path
 # import generate_small_alignment as generator
 import create_objects
 
-parser = argparse.ArgumentParser(description="Find horizontal gene transfer in given sequences.")
-parser.add_argument('-i', '--input', dest='input_file', required=True,
-                    help='Input file (json format)')
-parser.add_argument('-o', '--output', dest='output_file', default='resultHGT.csv',
-                    help='Output file consisting results of HTG analysis.')
-args = parser.parse_args()
+# parser = argparse.ArgumentParser(description="Find horizontal gene transfer in given sequences.")
+# parser.add_argument('-i', '--input', dest='input_file', required=True,
+#                     help='Input file (json format)')
+# parser.add_argument('-o', '--output', dest='output_file', default='resultHGT.csv',
+#                     help='Output file consisting results of HTG analysis.')
+# args = parser.parse_args()
 
 
 if __name__ == '__main__':
 
-    # probably not gonna use NCBI
     # ncbi = NCBITaxa()
     # ncbi.update_taxonomy_database()     # downloading and parsing latest database from NCBI
 
-    # taxonomy_file = 'input_files/taxonomy.csv'
-    taxonomy_file = 'taxonomy_from_id.csv'
+    taxonomy_file = 'input_files/taxonomy.csv'
+    # taxonomy_file = 'taxonomy_from_id.csv'
     output_dir = 'output_files'
     # alignment_file = open('input_files/alignment.identity')
     taxonomy = create_objects.createTaxObj(taxonomy_file)
@@ -35,7 +34,9 @@ if __name__ == '__main__':
     fasta_file = 'input_files/proteins.fa'
     clustalo = 'clustalo -i ' + fasta_file + ' -o output_files/alignment.fasta --full --distmat-out ' \
                                              'output_files/identity.txt --force --percent-id'
+    print("Performing alignment of sequences and calculating identity matrix...")
     # os.system(clustalo)
+    print("Alignment is done.")
     alignment_file = open('output_files/identity.txt')
 
     # number of all sequences
@@ -49,6 +50,7 @@ if __name__ == '__main__':
     alignment_file.readline()  # read first line (number of sequences)
     hit = open(f'{output_dir}/hit.txt', 'w')
 
+    print("Looking for horizontal gene transfer...")
     for line in alignment_file:
         temp = line.split()
         analysed_species = temp[0].split('|')[0]
@@ -83,7 +85,8 @@ if __name__ == '__main__':
                             tmp_org_next = getattr(tmpOrganism, nextLevel)
                             if (similarityPercentage == hitPercentage) and ori_org_next != tmp_org_next:
                                 # HIT
-                                hit.write(f'{hitPercentage}\t{analysed_species}\t{other_species}\t{analysed_protein}\t{other_protein}\t{level}:{getattr(originOrganism,level)}\n')
+                                hit.write(f'{hitPercentage}\t{analysed_species}\t{other_species}\t{analysed_protein}\t'
+                                          f'{other_protein}\t{level}:{getattr(originOrganism,level)}\n')
                             else:
                                 k = j + 1
                                 break  # excluding next lvl
@@ -97,10 +100,11 @@ if __name__ == '__main__':
                             nextLevel = taxonomy_levels[i+1]
                             ori_org_next = getattr(originOrganism, nextLevel)
                             tmp_org_next = getattr(tmpOrganism, nextLevel)
-                            if (similarityPercentage == hitPercentage) and ori_org_next != tmp_org_next:
+                            if ori_org_next != tmp_org_next:
                                 # HIT
                                 hitPercentage = similarityPercentage
-                                hit.write(f'{hitPercentage}\t{analysed_species}\t{other_species}\t{analysed_protein}\t{other_protein}\t{level}:{getattr(originOrganism,level)}\n')
+                                hit.write(f'{hitPercentage}\t{analysed_species}\t{other_species}\t{analysed_protein}\t'
+                                          f'{other_protein}\t{level}:{getattr(originOrganism,level)}\n')
                                 found = True
                             else:
                                 k = j + 1

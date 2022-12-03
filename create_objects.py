@@ -1,8 +1,8 @@
 class Tax:
     # genome_id = ''
-    def __init__(self, genome_id='', ncbi_id='', sk='', phylum='', cl='', order='', family='', genus='', species=''):
+    def __init__(self, genome_id='', sk='', phylum='', cl='', order='', family='', genus='', species=''):
         self.genome_id = genome_id
-        self.ncbi_id = ncbi_id
+        # self.ncbi_id = ncbi_id
         self.sk = sk
         self.phylum = phylum
         self.cl = cl
@@ -23,7 +23,7 @@ def createTaxObj(file):  # Creates objects from taxonomy.csv
     fh = open(file)
     fh.readline()
     for i, line in enumerate(fh):
-        tmp = line.split(sep='\t')
+        tmp = line.split(sep=',')
         tmp[-1] = tmp[-1][:-1]  # removing new line symbol
 
         a[tmp[0]] = (Tax(*tmp))
