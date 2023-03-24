@@ -7,7 +7,7 @@ from operator import itemgetter
 from pathlib import Path
 # from ete3 import NCBITaxa
 # import generate_small_alignment as generator
-import create_objects
+from create_objects import createTaxObj
 
 # parser = argparse.ArgumentParser(description="Find horizontal gene transfer in given sequences.")
 # parser.add_argument('-i', '--input', dest='input_file', required=True,
@@ -16,41 +16,60 @@ import create_objects
 #                     help='Output file consisting results of HTG analysis.')
 # args = parser.parse_args()
 
+OUT_DIR = 'output_files'
 
-if __name__ == '__main__':
+def create_alignment(filename, out_alignment=f'{OUT_DIR}/alignment.fasta', out_identity=f'{OUT_DIR}/identity.txt'):
+    """
+    Performing alignment for the given fasta sequences using clustalo. Two files are created: one with alignment,
+    the other with identity matrix calculated after alignment.
 
-    # ncbi = NCBITaxa()
-    # ncbi.update_taxonomy_database()     # downloading and parsing latest database from NCBI
-
-    taxonomy_file = 'input_files/taxonomy.csv'
-    # taxonomy_file = 'taxonomy_from_id.csv'
-    output_dir = 'output_files'
-    # alignment_file = open('input_files/alignment.identity')
-    taxonomy = create_objects.createTaxObj(taxonomy_file)
-    hitPercentage = 0
-    taxonomy_levels = ['genus', 'family', 'order', 'cl', 'phylum', 'sk']
-    Path(output_dir).mkdir(parents=True, exist_ok=True)  # creates directory if it didn't exist before
-
-    fasta_file = 'input_files/proteins.fa'
-    clustalo = 'clustalo -i ' + fasta_file + ' -o output_files/alignment.fasta --full --distmat-out ' \
-                                             'output_files/identity.txt --force --percent-id'
-    print("Performing alignment of sequences and calculating identity matrix...")
+    :param filename: file containing fasta sequences
+    :param out_alignment: output file containing alignment
+    :param out_identity: output file containing identity matrix of the sequences after alignment
+    :return: name of the file with identity matrix (out_identity)
+    """
+    clustalo = 'clustalo -i ' + filename + ' -o ' + out_alignment + ' --full --distmat-out ' + \
+               out_identity + ' --force --percent-id'
     # os.system(clustalo)
-    print("Alignment is done.")
-    alignment_file = open('output_files/identity.txt')
+
+    return out_identity
+
+
+def get_ids(aln_identity_filename):
+    """
+    IDs of the sequences are retrieved from the identity matrix.
+
+    :param aln_identity_filename: file containing identity matrix of the sequences after alignment
+    :return: list of IDs of the sequences
+    """
+    file = open(aln_identity_filename)
+    file.readline()  # read first line (number of sequences)
+
+    seq_ids = []
+    for line in file:
+        seq_ids.append(line.split()[0])
+    file.close()
+
+    return seq_ids
+
+
+def find_possible_HGT(aln_identity_filename, out_hit_filename='hit.txt'):
+    """
+
+    :param aln_identity_filename:
+    :param out_hit_filename:
+    :return:
+    """
+    # open file with identity percentage after alignment
+    alignment_file = open(aln_identity_filename)
 
     # number of all sequences
     seq_number = alignment_file.readline()
 
-    # get all ids in one array
-    ids = []
-    for line in alignment_file:
-        ids.append(line.split()[0])
-    alignment_file.seek(0)  # go back to beginning of the file
-    alignment_file.readline()  # read first line (number of sequences)
-    hit = open(f'{output_dir}/hit.txt', 'w')
+    # open file for saving all found hits
+    hit = open(f'{OUT_DIR}/{out_hit_filename}', 'w')
 
-    print("Looking for horizontal gene transfer...")
+    hitPercentage = 0
     for line in alignment_file:
         temp = line.split()
         analysed_species = temp[0].split('|')[0]
@@ -109,12 +128,25 @@ if __name__ == '__main__':
                             else:
                                 k = j + 1
                                 break  # excluding next lvl
+    alignment_file.close()
     hit.close()
 
+    # return name of the file with found hits
+    return out_hit_filename
+
+
+def crossHits(hits_filename, out_results='crossedResult.csv'):
+    """
+
+    :param hits_filename:
+    :param out_results:
+    :return:
+    """
     # save pairs to crossedResult.csv
-    inputFile = open(f'{output_dir}/hit.txt', 'r')
-    outputFile = open(f'{output_dir}/crossedResult.csv', 'w')
+    inputFile = open(f'{OUT_DIR}/{hits_filename}', 'r')
+    outputFile = open(f'{OUT_DIR}/{out_results}', 'w')
     inputContent = inputFile.readlines()
+    inputFile.close()
     foundItems = []
 
     for i, line in enumerate(inputContent):
@@ -123,7 +155,7 @@ if __name__ == '__main__':
 
         line_organism2 = line.split()[2]
         line_organism2_protein = line.split()[4]
-        for line2 in inputContent[(i+1):]:
+        for line2 in inputContent[(i + 1):]:
             line2_organism1 = line2.split()[1]
             line2_organism1_protein = line2.split()[3]
 
@@ -139,8 +171,8 @@ if __name__ == '__main__':
                         org1 = taxonomy[line_organism1]
                         org2 = taxonomy[line_organism2]
                         if getattr(org1, level) == getattr(org2, level):
-                            lvl_diff = str(idx+1)
-                            lvl_name = taxonomy_levels[idx-1]
+                            lvl_diff = str(idx + 1)
+                            lvl_name = taxonomy_levels[idx - 1]
                             break
                     line.strip()
 
@@ -149,8 +181,40 @@ if __name__ == '__main__':
                     foundItems.append(line.split())
 
     sorted(foundItems, key=itemgetter(1))
+    # write results to the file
     for line in foundItems:
         outputFile.write('\t'.join(line) + '\n')
 
-    inputFile.close()
     outputFile.close()
+
+    # return name of the file with results
+    return out_results
+
+
+if __name__ == '__main__':
+
+    # ncbi = NCBITaxa()
+    # ncbi.update_taxonomy_database()     # downloading and parsing latest database from NCBI
+
+    taxonomy_file = 'input_files/taxonomy.csv'
+    # taxonomy_file = 'taxonomy_from_id.csv'
+    output_dir = OUT_DIR
+    # alignment_file = open('input_files/alignment.identity')
+    taxonomy = createTaxObj(taxonomy_file)
+    taxonomy_levels = ['genus', 'family', 'order', 'cl', 'phylum', 'sk']
+    Path(output_dir).mkdir(parents=True, exist_ok=True)  # creates directory if it didn't exist before
+
+    fasta_file = 'input_files/proteins.fa'
+
+    print("Performing alignment of sequences and calculating identity matrix...")
+    align_identity_file = create_alignment(fasta_file)
+    print("Alignment is done.")
+
+    # get all ids in one array
+    ids = get_ids(align_identity_file)
+
+    print("Looking for horizontal gene transfer...")
+    possibleHits_file = find_possible_HGT(align_identity_file)
+    results_file = crossHits(possibleHits_file)
+    print(f'Results can be found in {results_file} file in directory {output_dir}.')
+
