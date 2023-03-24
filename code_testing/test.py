@@ -2,10 +2,10 @@ from ete3 import NCBITaxa
 import os
 ncbi = NCBITaxa()
 # ncbi.update_taxonomy_database() # wystarczy raz pobrać - polecenie aktualizuje lokalną bazę danych co zajmuje trochę czasu
-file_name = 'input_files/taxIDs.txt'
+file_name = '../input_files/taxIDs.txt'
 file = open(file_name)
 
-proteins = open('input_files/proteins.fa')
+proteins = open('../input_files/proteins.fa')
 genome_ids = []
 for line in proteins:
     if line[0] != '>':
